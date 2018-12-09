@@ -1,0 +1,62 @@
+v-container(fluid)
+  v-spacer
+  v-text-field(
+    v-model="search"
+    append-icon="search"
+    label="Search"
+    single-line
+    hide-details
+  )
+
+  v-dialog(v-model="dialog" max-width="500px")
+    v-btn.mb-2(slot="activator" color="primary" dark) New Item
+    v-card
+      v-card-title
+        span.headline {{ formTitle }}
+      v-card-text
+        v-container(grid-list-md)
+          v-layout(wrap)
+            v-flex(xs12)
+              v-text-field(v-model="editedItem.name" label="Name")
+            v-flex(xs12)
+              v-text-field(v-model="editedItem.email" label="Email")
+            v-flex(xs12)
+              v-text-field(v-model="editedItem.phone" label="Phone Number")
+            v-flex(xs12)
+              v-text-field(v-model="editedItem.company" label="Company")
+      v-card-actions
+        v-spacer
+        v-btn(color="blue darken-1" flat @click="close") Cancel
+        v-btn(color="blue darken-1" flat @click="save") Save
+
+  v-data-table(
+    :headers="headers"
+    :items="contacts"
+    :search="search"
+    :pagination.sync="pagination"
+    class="elevation-1"
+    :rows-per-page-items="[10,20]"
+  )
+    template(slot="items" slot-scope="props")
+      td {{ props.item.name }}
+      td(class="text-xs-left") {{ props.item.email }}
+      td(class="text-xs-left") {{ props.item.phone }}
+      td(class="text-xs-left") {{ props.item.company }}
+      td(class="justify-center align-center layout px-0")
+        v-icon(
+          small
+          class="mr-2"
+          @click="editItem(props.item)"
+        ) edit
+        v-icon(
+          small
+          @click="deleteItem(props.item)"
+        ) delete
+    v-alert(
+      slot="no-results"
+      :value="true"
+      color="error"
+      icon="warning"
+    ) Your search for "{{ search }}" found no results.
+  div(class="text-xs-center pt-2")
+    v-pagination(v-model="pagination.page" :length="pages")
